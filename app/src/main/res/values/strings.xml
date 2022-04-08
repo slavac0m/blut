@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sync System</string>
+    <string name="title_name">найденные устройства:</string>
+    <string name="discovering">Поиск...</string>
+</resources>
