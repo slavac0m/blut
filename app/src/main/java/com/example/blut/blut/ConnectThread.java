@@ -10,9 +10,6 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import com.example.blut.Bt2;
 import com.example.blut.MainActivity;
 import com.example.blut.R;

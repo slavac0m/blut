@@ -14,7 +14,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        generatedDensities = []
     }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"}
 
     buildTypes {
         release {
