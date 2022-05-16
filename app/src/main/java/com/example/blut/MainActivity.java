@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
                 ConnectStatus.setIcon(R.drawable.ic_circle_red);
+                actionBar.setTitle(R.string.not_connected);
             }
         }
     };
