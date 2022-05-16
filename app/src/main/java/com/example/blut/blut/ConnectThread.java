@@ -1,27 +1,27 @@
 package com.example.blut.blut;
 
-import android.Manifest;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.Log;
-import android.view.Menu;
-import android.widget.Toast;
 
-import com.example.blut.Bt2;
 import com.example.blut.MainActivity;
-import com.example.blut.R;
 
 import java.io.IOException;
-import java.util.UUID;
 
 
 public class ConnectThread extends Thread {
     private ReceiveThread receiveThread;
     protected BluetoothAdapter btAdapter;
+    protected MainActivity mainActivity;
+    protected boolean ConnectStatus = false;
+    public ConnectThread(){
+        this.ConnectStatus = ConnectStatus;
+    }
+//
+    public boolean isConnectStatus() {
+        return ConnectStatus;
+    }
 
     private BluetoothSocket mainSocket;
 
@@ -47,12 +47,16 @@ public class ConnectThread extends Thread {
                 receiveThread.start();
             } catch (SecurityException e){}
             Log.d("MyLog", "Connected");
-
-
+            ConnectStatus = true;
+            Log.d("MyLog", "Connected"+ ConnectStatus);
+//            mainActivity.StatusOk();
         }
         catch (IOException e ){
             Log.d("MyLog", "Not connected");
+            Log.d("MyLog", "Connected"+ConnectStatus);
+            ConnectStatus = false;
             closeConnection();
+//            mainActivity.StatusNo();
         }
     }
 

@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +39,14 @@ public class MainActivity extends AppCompatActivity {
     private BtConnect btConnect;
     private Button bA, bB, bC, bD;
     private ActionBar actionBar;
+    ConnectThread connectThread = new ConnectThread();
+
+    public void StatusOk(){
+        ConnectStatus.setIcon(R.drawable.ic_circle_green);
+    }
+    public void StatusNo(){
+        ConnectStatus.setIcon(R.drawable.ic_circle_red);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +57,6 @@ public class MainActivity extends AppCompatActivity {
         bC = findViewById(R.id.ButC);
         bD = findViewById(R.id.ButD);
         init();
-        actionBar = getSupportActionBar();
-
-
 
         View.OnClickListener clickListener = new View.OnClickListener() {
             @Override
@@ -58,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (view.getId()){
                     case R.id.ButA:
                         btConnect.sendMess("0");
+                        Log.d("MyLog", ""+connectThread);
+                        Toast.makeText(MainActivity.this, "Status: "+connectThread.isConnectStatus(), Toast.LENGTH_SHORT).show();
+                        System.out.println();
                         break;
                     case R.id.ButB:
                         btConnect.sendMess("1");
@@ -76,33 +85,42 @@ public class MainActivity extends AppCompatActivity {
         bC.setOnClickListener(clickListener);
         bD.setOnClickListener(clickListener);
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
-        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        this.registerReceiver(receiver, filter);
-    }
-    private final BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            BluetoothDevice device =intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
-                ConnectStatus.setIcon(R.drawable.ic_circle_green);
-                try {
-                    actionBar.setTitle( btAdapter.getName());
-                } catch (SecurityException e){
-
-                }
-
-            }
-            if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
-                ConnectStatus.setIcon(R.drawable.ic_circle_red);
-                actionBar.setTitle(R.string.not_connected);
-            }
+        if (connectThread.isConnectStatus()==false){
+            btConnect.connecting();
         }
-    };
+
+
+
+
+
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+//        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+//        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+//        this.registerReceiver(receiver, filter);
+    }
+//    rivate final BroadcastReceiver receiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            BluetoothDevice device =intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//
+//            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+//                ConnectStatus.setIcon(R.drawable.ic_circle_green);
+//                try {
+//                    actionBar.setTitle( btAdapter.getName());
+//                } catch (SecurityException e){
+//
+//                }
+//
+//            }
+//            if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
+//                ConnectStatus.setIcon(R.drawable.ic_circle_red);
+//                actionBar.setTitle(R.string.not_connected);
+//            }
+//        }
+//    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -139,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
