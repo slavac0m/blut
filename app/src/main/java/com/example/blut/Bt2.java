@@ -111,7 +111,6 @@ public class Bt2 extends AppCompatActivity {
         actionBar = getSupportActionBar();
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         list = new ArrayList<>();
-        ActionBar actionBar = getSupportActionBar();
         if (actionBar == null) return;
         actionBar.setDisplayHomeAsUpEnabled(true);
         listView = findViewById(R.id.listV);

@@ -2,11 +2,16 @@ package com.example.blut;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
@@ -22,13 +27,17 @@ import com.example.blut.blut.BtConnect;
 import com.example.blut.blut.ConnectThread;
 import com.example.blut.blut.ReceiveThread;
 
+import javax.net.ssl.SSLEngineResult;
+
 public class MainActivity extends AppCompatActivity {
     private MenuItem menuItem;
+    private MenuItem ConnectStatus;
     private BluetoothAdapter btAdapter;
     private final int REQUEST_BL = 15;
     private SharedPreferences preferences;
     private BtConnect btConnect;
     private Button bA, bB, bC, bD;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         bC = findViewById(R.id.ButC);
         bD = findViewById(R.id.ButD);
         init();
+        actionBar = getSupportActionBar();
 
 
 
@@ -65,12 +75,39 @@ public class MainActivity extends AppCompatActivity {
         bB.setOnClickListener(clickListener);
         bC.setOnClickListener(clickListener);
         bD.setOnClickListener(clickListener);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        this.registerReceiver(receiver, filter);
     }
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            BluetoothDevice device =intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)){
+                ConnectStatus.setIcon(R.drawable.ic_circle_green);
+                try {
+                    actionBar.setTitle( btAdapter.getName());
+                } catch (SecurityException e){
+
+                }
+
+            }
+            if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action)){
+                ConnectStatus.setIcon(R.drawable.ic_circle_red);
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         menuItem = menu.findItem(R.id.bt_id);
+        ConnectStatus = menu.findItem(R.id.id_status);
         setBtIcon();
         return super.onCreateOptionsMenu(menu);
     }

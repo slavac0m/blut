@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.Toast;
 
 import com.example.blut.Bt2;
@@ -36,6 +37,7 @@ public class ConnectThread extends Thread {
         }
     }
 
+
     @Override
     public void run() {
         try { btAdapter.cancelDiscovery(); }catch (SecurityException e ){}
@@ -45,6 +47,8 @@ public class ConnectThread extends Thread {
                 receiveThread.start();
             } catch (SecurityException e){}
             Log.d("MyLog", "Connected");
+
+
         }
         catch (IOException e ){
             Log.d("MyLog", "Not connected");
